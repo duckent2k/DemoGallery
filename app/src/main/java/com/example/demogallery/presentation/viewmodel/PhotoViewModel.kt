@@ -1,12 +1,9 @@
 package com.example.demogallery.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.demogallery.SharedPreferenceManager
 import com.example.demogallery.domain.model.Photo
 import com.example.demogallery.domain.repository.PhotoPagerRepository
 import com.example.demogallery.domain.usecase.GetPhotosUseCase

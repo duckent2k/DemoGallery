@@ -3,6 +3,7 @@
     <style name="Base.Theme.DemoGallery" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <style name="TextStyle">

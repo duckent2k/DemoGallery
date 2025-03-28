@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -17,6 +19,7 @@ import com.example.demogallery.R
 import com.example.demogallery.SharedPreferenceManager
 import com.example.demogallery.databinding.FragmentPhotoBinding
 import com.example.demogallery.presentation.viewmodel.PhotoViewModel
+import com.example.demogallery.presentation.viewmodel.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,6 +30,7 @@ class PhotoFragment : Fragment() {
     private var _binding: FragmentPhotoBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: PhotoAdapter
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +43,10 @@ class PhotoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+
         adapter = PhotoAdapter { photo, imageView ->
             val transitionName = "shared_image_${photo.id}"
             imageView.transitionName = transitionName
@@ -53,9 +61,13 @@ class PhotoFragment : Fragment() {
                 extras
             )
         }
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@PhotoFragment.adapter
+
+        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        sharedViewModel.grid.observe(viewLifecycleOwner) { newGrid ->
+            binding.recyclerView.apply {
+                layoutManager = GridLayoutManager(requireContext(), newGrid)
+                adapter = this@PhotoFragment.adapter
+            }
         }
 
         observeViewModel()
